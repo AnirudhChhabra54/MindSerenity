@@ -1,7 +1,7 @@
 # 🌿 MindSerenity: AI-Powered Mental Wellness Platform
 *Transforming Minds, Empowering Wellness Every Day*
 
-![MindSerenity Intro](assets/MindSerenity_Intro.mov)
+[🎥 **Watch MindSerenity Intro Video**](assets/MindSerenity_Intro.mov)
 
 > **Overview**: I designed and built MindSerenity as a comprehensive mental wellness application. It combines real-time AI emotion detection, immersive 3D visual therapy, and data-driven insights to help users understand and improve their mental state.
 
