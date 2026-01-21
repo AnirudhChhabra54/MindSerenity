@@ -1,11 +1,11 @@
 import HomePage3D from './HomePage3D';
 import React, { useState, useEffect, useMemo } from 'react';
+import AuthPage from './AuthPage';
+
 import { initializeApp } from 'firebase/app';
 import {
     getAuth,
     onAuthStateChanged,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
     signOut
 } from 'firebase/auth';
 import {
@@ -35,21 +35,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 //   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
 // );
 const LogOut = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
 );
 const AlertTriangle = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
 );
 
 // --- Firebase Configuration & Initialization ---
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD70Jkpo9M4xjkbcgD0R1jvnDcI2nMIdig",
-  authDomain: "mindwell-app-ani.firebaseapp.com",
-  projectId: "mindwell-app-ani",
-  storageBucket: "mindwell-app-ani.firebasestorage.app",
-  messagingSenderId: "1016038846568",
-  appId: "1:1016038846568:web:838563936201ad31f90bdd"
+    apiKey: "AIzaSyD70Jkpo9M4xjkbcgD0R1jvnDcI2nMIdig",
+    authDomain: "mindwell-app-ani.firebaseapp.com",
+    projectId: "mindwell-app-ani",
+    storageBucket: "mindwell-app-ani.firebasestorage.app",
+    messagingSenderId: "1016038846568",
+    appId: "1:1016038846568:web:838563936201ad31f90bdd"
 };
 // This is a fixed value for your local setup.
 const appId = 'default-mental-health-app';
@@ -152,72 +152,7 @@ const CustomModal = ({ title, message, onClose, type = 'info' }) => {
 
 // --- Main Application Components ---
 
-const AuthPage = ({ setNotification }) => {
-    const [isLogin, setIsLogin] = useState(true);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleAuth = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        try {
-            if (isLogin) {
-                await signInWithEmailAndPassword(auth, email, password);
-                setNotification({ type: 'success', title: 'Login Successful', message: 'Welcome back!' });
-            } else {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const userRolePath = doc(db, "roles", userCredential.user.uid);
-                await setDoc(userRolePath, { role: 'student' });
-                setNotification({ type: 'success', title: 'Account Created', message: 'You can now log in.' });
-                setIsLogin(true);
-            }
-        } catch (error) {
-            console.error("Authentication error:", error);
-            setNotification({ type: 'error', title: 'Authentication Failed', message: error.message });
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
-                <div className="text-center">
-                    <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-                        {isLogin ? 'Sign in to your account' : 'Create a new account'}
-                    </h2>
-                </div>
-                <form className="mt-8 space-y-6" onSubmit={handleAuth}>
-                    <div className="rounded-md shadow-sm -space-y-px">
-                        <div>
-                            <input id="email-address" name="email" type="email" autoComplete="email" required 
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
-                        </div>
-                        <div>
-                            <input id="password" name="password" type="password" autoComplete="current-password" required 
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                        </div>
-                    </div>
-
-                    <div>
-                        <button type="submit" disabled={isLoading}
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300">
-                            {isLoading ? <LoadingSpinner /> : (isLogin ? 'Sign In' : 'Create Account')}
-                        </button>
-                    </div>
-                </form>
-                <div className="text-sm text-center">
-                    <button onClick={() => setIsLogin(!isLogin)} className="font-medium text-blue-600 hover:text-blue-500">
-                        {isLogin ? 'Don\'t have an account? Sign up' : 'Already have an account? Sign in'}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const SurveyPage = ({ user, setPage, setLastResult, setNotification }) => {
     const [step, setStep] = useState(0);
@@ -241,7 +176,7 @@ const SurveyPage = ({ user, setPage, setLastResult, setNotification }) => {
             setStep(s => s - 1);
         }
     };
-    
+
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
@@ -253,7 +188,7 @@ const SurveyPage = ({ user, setPage, setLastResult, setNotification }) => {
                 phq9_score,
                 gad7_score,
             };
-            
+
             const userSurveyPath = collection(db, `artifacts/${appId}/users/${user.uid}/surveys`);
             const docRef = await addDoc(userSurveyPath, submissionData);
 
@@ -265,11 +200,11 @@ const SurveyPage = ({ user, setPage, setLastResult, setNotification }) => {
 
             setLastResult(submissionData);
             setPage('results');
-            setNotification({type: 'success', title: 'Survey Submitted', message: 'Thank you for completing the assessment.'});
+            setNotification({ type: 'success', title: 'Survey Submitted', message: 'Thank you for completing the assessment.' });
 
         } catch (error) {
             console.error("Error submitting survey:", error);
-            setNotification({type: 'error', title: 'Submission Failed', message: 'Could not save your results. Please try again.'});
+            setNotification({ type: 'error', title: 'Submission Failed', message: 'Could not save your results. Please try again.' });
         } finally {
             setIsLoading(false);
         }
@@ -386,9 +321,9 @@ const SurveyPage = ({ user, setPage, setLastResult, setNotification }) => {
                 <div className="min-h-[400px]">
                     {renderStep()}
                 </div>
-                
+
                 <div className="flex justify-between mt-8">
-                    <button onClick={prevStep} disabled={step === 0 || isLoading} 
+                    <button onClick={prevStep} disabled={step === 0 || isLoading}
                         className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400 disabled:opacity-50">
                         Previous
                     </button>
@@ -420,7 +355,7 @@ const ResultsPage = ({ result, setPage }) => {
             </div>
         );
     }
-    
+
     const { phq9_score, gad7_score, answers } = result;
     const depressionRisk = getRiskLevel(phq9_score);
     const anxietyRisk = getRiskLevel(gad7_score);
@@ -435,7 +370,7 @@ const ResultsPage = ({ result, setPage }) => {
                 {isHighRisk && (
                     <div className="p-4 mb-6 bg-red-100 border-l-4 border-red-500 text-red-700">
                         <div className="flex">
-                            <div className="py-1"><AlertTriangle className="h-6 w-6 text-red-500 mr-4"/></div>
+                            <div className="py-1"><AlertTriangle className="h-6 w-6 text-red-500 mr-4" /></div>
                             <div>
                                 <p className="font-bold">Important: Immediate Support Recommended</p>
                                 <p>Your responses indicate a high level of distress. It is strongly recommended that you speak with a mental health professional or contact a crisis line immediately.</p>
@@ -463,7 +398,7 @@ const ResultsPage = ({ result, setPage }) => {
                         <li><span className="font-semibold">Track your mood over time:</span> Consider taking this assessment again in a few weeks to see how you're doing.</li>
                         <li><span className="font-semibold">Explore self-help resources:</span> Visit our Resources page for tools and strategies.</li>
                         <li><span className="font-semibold">Talk to someone you trust:</span> Sharing how you feel with a friend, family member, or counselor can help.</li>
-                        { (phq9_score >= 10 || gad7_score >= 10) && <li><span className="font-semibold">Consider professional help:</span> Your scores suggest you may benefit from talking to a therapist or counselor.</li>}
+                        {(phq9_score >= 10 || gad7_score >= 10) && <li><span className="font-semibold">Consider professional help:</span> Your scores suggest you may benefit from talking to a therapist or counselor.</li>}
                     </ul>
                     <div className="mt-6 flex flex-wrap gap-4">
                         <button onClick={() => setPage('resources')} className="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">
@@ -525,11 +460,11 @@ const StudentDashboard = ({ user, isAuthReady }) => {
             setIsLoading(false);
             return;
         }
-        
+
         setIsLoading(true);
         const userSurveyPath = `artifacts/${appId}/users/${user.uid}/surveys`;
         const q = query(collection(db, userSurveyPath), orderBy('createdAt', 'desc'));
-        
+
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const results = [];
             querySnapshot.forEach((doc) => {
@@ -606,7 +541,7 @@ const AdminDashboard = ({ isAuthReady }) => {
 
         return () => unsubscribe();
     }, [isAuthReady]);
-    
+
     const chartData = useMemo(() => {
         const riskCounts = {
             depression: { 'Low Risk': 0, 'Mild Risk': 0, 'Moderate Risk': 0, 'High Risk': 0 },
@@ -618,7 +553,7 @@ const AdminDashboard = ({ isAuthReady }) => {
             if (riskCounts.depression[depRisk] !== undefined) riskCounts.depression[depRisk]++;
             if (riskCounts.anxiety[anxRisk] !== undefined) riskCounts.anxiety[anxRisk]++;
         });
-        
+
         return {
             depression: {
                 labels: Object.keys(riskCounts.depression),
@@ -656,7 +591,7 @@ const AdminDashboard = ({ isAuthReady }) => {
                     <Bar data={chartData.anxiety} options={{ responsive: true, plugins: { legend: { display: false } } }} />
                 </div>
             </div>
-            
+
             <div>
                 <h4 className="text-xl font-semibold mb-4">Recent Submissions (Anonymized)</h4>
                 <div className="bg-white rounded-lg shadow overflow-x-auto">
@@ -710,7 +645,7 @@ export default function App() {
     const [notification, setNotification] = useState(null);
 
     useEffect(() => {
-        let unsubRole = () => {};
+        let unsubRole = () => { };
 
         const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
             unsubRole();
@@ -745,7 +680,7 @@ export default function App() {
         setPage('home');
         setNotification({ type: 'info', title: 'Signed Out', message: 'You have been successfully signed out.' });
     };
-    
+
     const renderPage = () => {
         const pageVariants = {
             initial: {
@@ -802,7 +737,7 @@ export default function App() {
             </AnimatePresence>
         );
     };
-    
+
     if (!isAuthReady) {
         return (
             <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -815,7 +750,8 @@ export default function App() {
         return (
             <>
                 {notification && <CustomModal {...notification} onClose={() => setNotification(null)} />}
-                <AuthPage setNotification={setNotification} />
+                <AuthPage setNotification={setNotification} auth={auth} db={db} />
+
             </>
         );
     }
@@ -843,7 +779,7 @@ export default function App() {
                         <div className="flex items-center">
                             <span className="text-sm text-gray-600 mr-4 hidden sm:block">{user.email || 'Anonymous User'}</span>
                             <button onClick={handleSignOut} className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                <LogOut className="h-5 w-5"/>
+                                <LogOut className="h-5 w-5" />
                             </button>
                         </div>
                     </div>
